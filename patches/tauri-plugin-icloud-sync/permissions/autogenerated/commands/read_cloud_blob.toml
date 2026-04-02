@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-read-cloud-blob"
+description = "Enables the read_cloud_blob command without any pre-configured scope."
+commands.allow = ["read_cloud_blob"]
+
+[[permission]]
+identifier = "deny-read-cloud-blob"
+description = "Denies the read_cloud_blob command without any pre-configured scope."
+commands.deny = ["read_cloud_blob"]

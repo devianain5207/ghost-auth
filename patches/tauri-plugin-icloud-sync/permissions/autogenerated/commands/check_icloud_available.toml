@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-check-icloud-available"
+description = "Enables the check_icloud_available command without any pre-configured scope."
+commands.allow = ["check_icloud_available"]
+
+[[permission]]
+identifier = "deny-check-icloud-available"
+description = "Denies the check_icloud_available command without any pre-configured scope."
+commands.deny = ["check_icloud_available"]

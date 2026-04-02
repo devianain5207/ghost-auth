@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Ghost Auth</title>
+    <script>
+      (function(){var t=localStorage.getItem('ghost-auth-theme');if(!t)t='light';document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('ghost-auth-font-size');if(f&&!isNaN(parseFloat(f)))document.documentElement.style.setProperty('--font-vw',f);var l=localStorage.getItem('ghost-auth-locale');if(l&&/^(ar|he|fa|ur)/.test(l))document.documentElement.dir='rtl'})();
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,288 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #000000;
+  --color-fg: #ffffff;
+  --color-surface: #0a0a0a;
+  --color-surface-2: #111111;
+  --color-border: #3d3d3d;
+  --color-dim: #777777;
+  --color-muted: #999999;
+  --color-accent: #4ade80;
+  --color-error: #f87171;
+  --color-backdrop: rgba(0, 0, 0, 0.8);
+  --color-backdrop-light: rgba(0, 0, 0, 0.5);
+}
+
+/* Light theme overrides */
+[data-theme="light"] {
+  --color-bg: #f5f5f0;
+  --color-fg: #1a1a1a;
+  --color-surface: #ededea;
+  --color-surface-2: #e5e5e0;
+  --color-border: #8a8a85;
+  --color-dim: #5a5a5a;
+  --color-muted: #555555;
+  --color-accent: #16a34a;
+  --color-error: #dc2626;
+  --color-backdrop: rgba(0, 0, 0, 0.4);
+  --color-backdrop-light: rgba(0, 0, 0, 0.25);
+}
+
+html { font-size: calc(clamp(15px, calc(var(--font-vw, 4.2) * 1vw), 20px) * var(--dt-scale, 1)); }
+
+html, body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Safe-area aliases:
+   - Prefer values injected by the edge-to-edge plugin on mobile.
+   - Fall back to native env() values for browsers/desktop. */
+:root {
+  --font-vw: 4.2;
+  --dt-scale: 1;
+  --ga-safe-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --ga-safe-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
+  --ga-safe-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --ga-safe-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+}
+
+/* Root safe area — prevents all normal-flow content from extending behind
+   system navigation bars (Android) and the home indicator (iOS).
+   Fixed-position elements (modals, FAB, toasts) are unaffected and handle
+   their own safe areas via pb-safe / fab-bottom.
+   overflow-x lives here (not on body) to avoid implicit overflow-y: auto
+   on the viewport, which breaks position: sticky in mobile WebViews. */
+#app {
+  min-height: 100dvh;
+  padding-bottom: var(--ga-safe-bottom);
+  overflow-x: hidden;
+}
+
+/* Spacer for fixed header — matches header height (py-4 + content + 0.5rem air) + safe area */
+.pt-header {
+  padding-top: calc(var(--ga-safe-top) + 4.5rem);
+}
+
+::selection {
+  background: var(--color-fg);
+  color: var(--color-bg);
+}
+
+/* Dotted line utility */
+.border-dotted-b {
+  border-bottom: 1px dotted var(--color-border);
+}
+
+.border-dotted-t {
+  border-top: 1px dotted var(--color-border);
+}
+
+/* Input styling */
+input, textarea, select {
+  font-family: inherit;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--color-dim);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+}
+
+/* Safe area insets for mobile notches / nav bars */
+.pb-safe {
+  padding-bottom: max(2.5rem, var(--ga-safe-bottom));
+}
+.pt-safe {
+  padding-top: calc(var(--ga-safe-top) + 0.5rem);
+}
+.fab-bottom {
+  /* dvh: proportional across aspect ratios; safe-area: clears system nav */
+  bottom: max(3rem, calc(var(--ga-safe-bottom) + 0.75rem));
+  bottom: max(7dvh, calc(var(--ga-safe-bottom) + 0.75rem));
+  transform: translateY(calc(var(--keyboard-inset-bottom, 0px) * -1));
+  transition: transform 0.25s ease-in-out;
+  will-change: transform;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.search-bottom {
+  bottom: max(3rem, calc(var(--ga-safe-bottom) + 0.75rem));
+  bottom: max(7dvh, calc(var(--ga-safe-bottom) + 0.75rem));
+  transform: translateY(calc(var(--keyboard-inset-bottom, 0px) * -1));
+  transition: transform 0.25s ease-in-out;
+  will-change: transform;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Bottom fade: content fades into the background before the search/FAB bar */
+.bottom-fade {
+  bottom: 0;
+  height: calc(12.5rem + max(3rem, var(--ga-safe-bottom) + 0.75rem));
+  height: calc(12.5rem + max(7dvh, var(--ga-safe-bottom) + 0.75rem));
+  background: linear-gradient(to bottom, transparent 30%, var(--color-bg) 100%);
+}
+
+/* Icon theme adaptation: dark SVGs need invert in dark mode only */
+.icon-adapt {
+  filter: invert(1);
+}
+[data-theme="light"] .icon-adapt {
+  filter: invert(0);
+}
+
+/* Focus visibility for WCAG 2.4.7 */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Shake animation for wrong PIN */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+/* Modal backdrop fade */
+.modal-backdrop {
+  background: var(--color-backdrop);
+  opacity: 0;
+  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.modal-backdrop.open {
+  opacity: 1;
+}
+
+/* Modal panel slide-up */
+.modal-panel {
+  transform: translateY(100%);
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  padding-bottom: calc(3rem + var(--ga-safe-bottom));
+  max-height: calc(85vh - var(--keyboard-inset-bottom, 0px));
+  overflow-y: auto;
+  will-change: transform;
+}
+.modal-panel.open {
+  transform: translateY(calc(var(--keyboard-inset-bottom, 0px) * -1));
+}
+@media (min-width: 640px) {
+  .modal-panel {
+    transform: translateY(20px);
+    opacity: 0;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    padding-bottom: 2rem;
+  }
+  .modal-panel.open {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* PIN dot pop-in */
+@keyframes dot-in {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.pin-dot-filled {
+  animation: dot-in 0.15s ease-in-out;
+}
+
+/* TOTP code digit cascade on refresh */
+@keyframes code-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+.code-digit {
+  display: inline-block;
+  animation: code-in 200ms ease-in-out backwards;
+}
+.code-space {
+  display: inline-block;
+  width: 0.4em;
+}
+
+/* Numpad key tap */
+.numpad-key {
+  transition: transform 0.1s ease, opacity 0.1s ease;
+}
+.numpad-key:active {
+  transform: scale(0.88);
+  opacity: 0.6;
+}
+
+/* Splash fade-in */
+@keyframes splash-fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.splash-fade-in {
+  animation: splash-fade-in 0.4s ease-out;
+}
+
+/* RTL support */
+:dir(rtl) .rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* RTL: reverse slide-in direction for panels */
+:dir(rtl) .settings-slide {
+  transform: translateX(-100%);
+}
+:dir(rtl) .settings-slide.open {
+  transform: translateX(0);
+}
+
+/* Respect user's motion preferences (WCAG 2.3.3) */
+@media (prefers-reduced-motion: reduce) {
+  .animate-shake,
+  .pin-dot-filled,
+  .splash-fade-in,
+  .code-digit {
+    animation: none !important;
+  }
+  .modal-backdrop,
+  .modal-panel,
+  .fab-bottom,
+  .search-bottom,
+  .numpad-key {
+    transition: none !important;
+  }
+}
+
+/* QR scanner windowed mode — transparent webview, only scan overlay visible */
+html.scanning,
+html.scanning body {
+  background: transparent !important;
+}
+html.scanning * {
+  visibility: hidden !important;
+}
+html.scanning .scan-overlay,
+html.scanning .scan-overlay * {
+  visibility: visible !important;
+}

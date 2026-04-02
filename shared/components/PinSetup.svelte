@@ -1,0 +1,197 @@
+<script lang="ts">
+  import { tick } from 'svelte';
+  import { _ } from 'svelte-i18n';
+  import { getErrorMessage } from "$shared/utils/error";
+  import RecoveryCodes from "./RecoveryCodes.svelte";
+
+  let {
+    onclose,
+    ondone,
+    setPin,
+    copyToClipboard,
+    onwrapdek,
+    compact = false,
+  }: {
+    onclose: () => void;
+    ondone: () => void;
+    setPin: (pin: string) => Promise<string[]>;
+    copyToClipboard: (text: string) => Promise<void>;
+    onwrapdek?: (pin: string) => Promise<void>;
+    compact?: boolean;
+  } = $props();
+
+  let step: "enter" | "confirm" | "recovery" = $state("enter");
+  let pin = $state("");
+  let firstPin = $state("");
+  let error = $state("");
+  let shake = $state(false);
+  let saving = $state(false);
+  let savingStep: "encrypting" | "recovery" = $state("encrypting");
+  let spinnerFrame = $state(0);
+  let recoveryCodes: string[] = $state([]);
+
+  const spinnerChars = ["|", "/", "\u2014", "\\"];
+  let spinnerChar = $derived(spinnerChars[spinnerFrame % 4]);
+
+  $effect(() => {
+    if (!saving) return;
+    const interval = setInterval(() => { spinnerFrame++; }, 150);
+    return () => clearInterval(interval);
+  });
+
+  const MAX_PIN = 8;
+
+  let prompt = $derived(step === "enter" ? $_('pinSetup.choosePin') : $_('pinSetup.confirmPin'));
+
+  function pressKey(digit: string) {
+    if (pin.length >= MAX_PIN || saving) return;
+    pin += digit;
+    error = "";
+  }
+
+  function backspace() {
+    if (saving) return;
+    pin = pin.slice(0, -1);
+    error = "";
+  }
+
+  async function submit() {
+    if (pin.length < 4 || saving) return;
+
+    if (step === "enter") {
+      firstPin = pin;
+      pin = "";
+      step = "confirm";
+      return;
+    }
+
+    // Confirm step
+    if (pin !== firstPin) {
+      error = $_('pinSetup.mismatch');
+      shake = true;
+      setTimeout(() => { shake = false; }, 500);
+      pin = "";
+      step = "enter";
+      firstPin = "";
+      return;
+    }
+
+    saving = true;
+    savingStep = "encrypting";
+    spinnerFrame = 0;
+    // Yield to let the browser paint the spinner before heavy work starts
+    // Double rAF needed for iOS WKWebView — first rAF schedules the
+    // frame, second ensures the compositor has actually painted it.
+    await tick();
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    try {
+      recoveryCodes = await setPin(pin);
+      savingStep = "recovery";
+      await onwrapdek?.(pin);
+      step = "recovery";
+    } catch (e) {
+      error = getErrorMessage(e, $_);
+      pin = "";
+      step = "enter";
+      firstPin = "";
+    } finally {
+      saving = false;
+    }
+  }
+
+  function handleKeydown(e: KeyboardEvent) {
+    if (step === "recovery") return;
+    if (e.key >= "0" && e.key <= "9") {
+      pressKey(e.key);
+    } else if (e.key === "Backspace") {
+      backspace();
+    } else if (e.key === "Enter") {
+      submit();
+    } else if (e.key === "Escape") {
+      onclose();
+    }
+  }
+</script>
+
+<svelte:window onkeydown={handleKeydown} />
+
+{#if step === "recovery"}
+  <RecoveryCodes codes={recoveryCodes} {ondone} {copyToClipboard} />
+{:else}
+  <div class="fixed inset-0 z-50 bg-bg flex flex-col items-center justify-center select-none">
+    {#if saving}
+      <div class="absolute inset-0 z-10 bg-bg/90 flex flex-col items-center justify-center gap-4">
+        <span class="text-2xl text-fg font-mono select-none" aria-hidden="true">{spinnerChar}</span>
+        <span class="text-sm text-dim tracking-wide">
+          {savingStep === "encrypting" ? $_('pinSetup.encrypting') : $_('pinSetup.generatingRecovery')}
+        </span>
+      </div>
+    {/if}
+
+    <!-- Title -->
+    <span class="text-base text-muted tracking-wide {compact ? 'mb-6' : 'mb-8'}">{prompt}</span>
+
+    <!-- PIN dots -->
+    <div class="flex gap-2.5 mb-3 h-8 items-center justify-center {shake ? 'animate-shake' : ''}">
+      {#each { length: pin.length } as _}
+        <div class="w-3 h-3 rounded-full bg-fg pin-dot-filled"></div>
+      {/each}
+    </div>
+
+    <!-- Error / hint -->
+    <div class="h-6 {compact ? 'mb-4' : 'mb-6'}">
+      {#if error}
+        <span class="text-xs text-error">{error}</span>
+      {:else}
+        <span class="text-xs text-dim">{$_('pinSetup.digitHint')}</span>
+      {/if}
+    </div>
+
+    <!-- Numpad -->
+    <div class="grid grid-cols-3 {compact ? 'gap-3' : 'gap-4'}">
+      {#each ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as digit}
+        <button
+          type="button"
+          class="numpad-key {compact ? 'w-16 h-16' : 'w-20 h-20'} flex items-center justify-center {compact ? 'text-xl' : 'text-2xl'} text-fg/80 hover:text-fg rounded-lg"
+          onclick={() => pressKey(digit)}
+        >
+          {digit}
+        </button>
+      {/each}
+      <button
+        type="button"
+        class="numpad-key {compact ? 'w-16 h-16' : 'w-20 h-20'} flex items-center justify-center text-sm text-dim hover:text-fg"
+        onclick={backspace}
+      >
+        {$_('numpad.del')}
+      </button>
+      <button
+        type="button"
+        class="numpad-key {compact ? 'w-16 h-16' : 'w-20 h-20'} flex items-center justify-center {compact ? 'text-xl' : 'text-2xl'} text-fg/80 hover:text-fg rounded-lg"
+        onclick={() => pressKey("0")}
+      >
+        0
+      </button>
+      <button
+        type="button"
+        class="numpad-key {compact ? 'w-16 h-16' : 'w-20 h-20'} flex items-center justify-center text-sm {pin.length >= 4 ? 'text-fg hover:text-fg/80' : 'text-dim/50 cursor-default'}"
+        onclick={submit}
+        disabled={pin.length < 4}
+      >
+        {$_('numpad.ok')}
+      </button>
+    </div>
+
+    <!-- Cancel -->
+    <button
+      type="button"
+      class="{compact ? 'mt-6' : 'mt-8'} text-dim hover:text-fg transition-colors p-2"
+      onclick={onclose}
+      aria-label={$_('common.cancel')}
+    >
+      <svg class="w-4 h-4" width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <line x1="2" y1="2" x2="12" y2="12" /><line x1="12" y1="2" x2="2" y2="12" />
+      </svg>
+    </button>
+  </div>
+{/if}
